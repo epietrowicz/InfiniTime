@@ -186,7 +186,7 @@ void AlarmController::LoadSettingsFromFile() {
   lfs_file_t alarmFile;
   AlarmData alarmBuffer;
 
-  if (fs.FileOpen(&alarmFile, "/.system/alarm.dat", LFS_O_RDONLY) != LFS_ERR_OK) {
+  if (fs.FileOpen(&alarmFile, "/.system/alarms.dat", LFS_O_RDONLY) != LFS_ERR_OK) {
     NRF_LOG_WARNING("[AlarmController] Failed to open alarm data file, using defaults");
     InitializeDefaultAlarms();
     return;
@@ -195,14 +195,7 @@ void AlarmController::LoadSettingsFromFile() {
   fs.FileRead(&alarmFile, reinterpret_cast<uint8_t*>(&alarmBuffer), sizeof(alarmBuffer));
   fs.FileClose(&alarmFile);
 
-  if (alarmBuffer.version == 1) {
-    // Legacy single alarm format - convert to new format
-    NRF_LOG_INFO("[AlarmController] Converting legacy alarm format");
-    alarmData.version = alarmFormatVersion;
-    alarmData.alarms = defaultAlarms;
-    // Copy the single alarm to index 0
-    alarmData.alarms[0] = *reinterpret_cast<AlarmSettings*>(&alarmBuffer);
-  } else if (alarmBuffer.version == alarmFormatVersion) {
+  if (alarmBuffer.version == alarmFormatVersion) {
     alarmData = alarmBuffer;
     NRF_LOG_INFO("[AlarmController] Loaded alarm settings from file");
   } else {
@@ -220,7 +213,7 @@ void AlarmController::SaveSettingsToFile() const {
   }
   fs.DirClose(&systemDir);
   lfs_file_t alarmFile;
-  if (fs.FileOpen(&alarmFile, "/.system/alarm.dat", LFS_O_WRONLY | LFS_O_CREAT) != LFS_ERR_OK) {
+  if (fs.FileOpen(&alarmFile, "/.system/alarms.dat", LFS_O_WRONLY | LFS_O_CREAT) != LFS_ERR_OK) {
     NRF_LOG_WARNING("[AlarmController] Failed to open alarm data file for saving");
     return;
   }

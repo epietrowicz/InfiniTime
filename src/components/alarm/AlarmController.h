@@ -139,11 +139,11 @@ namespace Pinetime {
       inline static constexpr std::array<const char*, MaxAlarms> alarmNames = {"Wake Up", "Work Time", "Lunch Break", "Evening", "Bedtime"};
 
       // Hardcoded alarm definitions
-      inline static constexpr std::array<AlarmSettings, MaxAlarms> defaultAlarms = {{{7, 0, RecurType::Daily, false},
-                                                                                     {8, 30, RecurType::Weekdays, false},
-                                                                                     {12, 0, RecurType::Weekdays, false},
-                                                                                     {18, 0, RecurType::Daily, false},
-                                                                                     {22, 0, RecurType::Daily, false}}};
+      inline static constexpr std::array<AlarmSettings, MaxAlarms> defaultAlarms = {{{7, 0, RecurType::Daily, true},
+                                                                                     {8, 30, RecurType::Weekdays, true},
+                                                                                     {12, 0, RecurType::Weekdays, true},
+                                                                                     {18, 0, RecurType::Daily, true},
+                                                                                     {22, 0, RecurType::Daily, true}}};
 
       void LoadSettingsFromFile();
       void SaveSettingsToFile() const;

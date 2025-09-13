@@ -40,6 +40,7 @@ SystemTask::SystemTask(Drivers::SpiMaster& spi,
                        Controllers::Ble& bleController,
                        Controllers::DateTime& dateTimeController,
                        Controllers::AlarmController& alarmController,
+                       Controllers::MultipleAlarmController& multipleAlarmController,
                        Drivers::Watchdog& watchdog,
                        Pinetime::Controllers::NotificationManager& notificationManager,
                        Pinetime::Drivers::Hrs3300& heartRateSensor,
@@ -60,6 +61,7 @@ SystemTask::SystemTask(Drivers::SpiMaster& spi,
     bleController {bleController},
     dateTimeController {dateTimeController},
     alarmController {alarmController},
+    multipleAlarmController {multipleAlarmController},
     watchdog {watchdog},
     notificationManager {notificationManager},
     heartRateSensor {heartRateSensor},
@@ -128,6 +130,7 @@ void SystemTask::Work() {
   batteryController.Register(this);
   motionSensor.SoftReset();
   alarmController.Init(this);
+  multipleAlarmController.Init(this);
 
   // Reset the TWI device because the motion sensor chip most probably crashed it...
   twiMaster.Sleep();
@@ -184,6 +187,7 @@ void SystemTask::Work() {
 #pragma ide diagnostic ignored "EndlessLoop"
   while (true) {
     UpdateMotion();
+    multipleAlarmController.CheckAlarms();
 
     Messages msg;
     if (xQueueReceive(systemTasksMsgQueue, &msg, 100) == pdTRUE) {

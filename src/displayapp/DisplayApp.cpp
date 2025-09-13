@@ -4,7 +4,7 @@
 #include "displayapp/screens/Motion.h"
 #include "displayapp/screens/Timer.h"
 #include "displayapp/screens/Alarm.h"
-#include "displayapp/screens/ScheduledReminders.h"
+#include "displayapp/screens/HearingAlerts.h"
 #include "components/battery/BatteryController.h"
 #include "components/ble/BleController.h"
 #include "components/datetime/DateTimeController.h"
@@ -84,6 +84,7 @@ DisplayApp::DisplayApp(Drivers::St7789& lcd,
                        Pinetime::Controllers::MotorController& motorController,
                        Pinetime::Controllers::MotionController& motionController,
                        Pinetime::Controllers::AlarmController& alarmController,
+                       Pinetime::Controllers::MultipleAlarmController& multipleAlarmController,
                        Pinetime::Controllers::BrightnessController& brightnessController,
                        Pinetime::Controllers::TouchHandler& touchHandler,
                        Pinetime::Controllers::FS& filesystem,
@@ -100,6 +101,7 @@ DisplayApp::DisplayApp(Drivers::St7789& lcd,
     motorController {motorController},
     motionController {motionController},
     alarmController {alarmController},
+    multipleAlarmController {multipleAlarmController},
     brightnessController {brightnessController},
     touchHandler {touchHandler},
     filesystem {filesystem},
@@ -115,6 +117,7 @@ DisplayApp::DisplayApp(Drivers::St7789& lcd,
                  motorController,
                  motionController,
                  alarmController,
+                 multipleAlarmController,
                  brightnessController,
                  nullptr,
                  filesystem,

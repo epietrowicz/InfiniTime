@@ -20,6 +20,9 @@
 #include <FreeRTOS.h>
 #include <timers.h>
 #include <cstdint>
+#include <array>
+#include <chrono>
+#include <string>
 #include "components/datetime/DateTimeController.h"
 
 namespace Pinetime {
@@ -28,67 +31,123 @@ namespace Pinetime {
   }
 
   namespace Controllers {
+    class AlarmController;
+
+    struct AlarmTimerData {
+      Pinetime::Controllers::AlarmController* controller;
+      uint8_t alarmIndex;
+    };
+
     class AlarmController {
     public:
       AlarmController(Controllers::DateTime& dateTimeController, Controllers::FS& fs);
 
       void Init(System::SystemTask* systemTask);
+      void SaveAlarms();
       void SaveAlarm();
-      void SetAlarmTime(uint8_t alarmHr, uint8_t alarmMin);
-      void ScheduleAlarm();
-      void DisableAlarm();
-      void SetOffAlarmNow();
-      uint32_t SecondsToAlarm() const;
+      void SetAlarmTime(uint8_t alarmIndex, uint8_t alarmHr, uint8_t alarmMin);
+      void ScheduleAlarm(uint8_t alarmIndex);
+      void DisableAlarm(uint8_t alarmIndex);
+      void SetOffAlarmNow(uint8_t alarmIndex);
+      uint32_t SecondsToAlarm(uint8_t alarmIndex) const;
       void StopAlerting();
       enum class RecurType { None, Daily, Weekdays };
 
-      uint8_t Hours() const {
-        return alarm.hours;
+      // Legacy single alarm interface for backward compatibility
+      void SetAlarmTime(uint8_t alarmHr, uint8_t alarmMin) {
+        SetAlarmTime(0, alarmHr, alarmMin);
       }
 
-      uint8_t Minutes() const {
-        return alarm.minutes;
+      void ScheduleAlarm() {
+        ScheduleAlarm(0);
+      }
+
+      void DisableAlarm() {
+        DisableAlarm(0);
+      }
+
+      void SetOffAlarmNow() {
+        SetOffAlarmNow(0);
+      }
+
+      uint32_t SecondsToAlarm() const {
+        return SecondsToAlarm(0);
+      }
+
+      uint8_t Hours(uint8_t alarmIndex = 0) const {
+        return alarmData.alarms[alarmIndex].hours;
+      }
+
+      uint8_t Minutes(uint8_t alarmIndex = 0) const {
+        return alarmData.alarms[alarmIndex].minutes;
       }
 
       bool IsAlerting() const {
         return isAlerting;
       }
 
-      bool IsEnabled() const {
-        return alarm.isEnabled;
+      bool IsEnabled(uint8_t alarmIndex = 0) const {
+        return alarmData.alarms[alarmIndex].isEnabled;
       }
 
-      RecurType Recurrence() const {
-        return alarm.recurrence;
+      RecurType Recurrence(uint8_t alarmIndex = 0) const {
+        return alarmData.alarms[alarmIndex].recurrence;
       }
 
-      void SetRecurrence(RecurType recurrence);
+      void SetRecurrence(uint8_t alarmIndex, RecurType recurrence);
+
+      void SetRecurrence(RecurType recurrence) {
+        SetRecurrence(0, recurrence);
+      } // Legacy
+
+      const char* GetAlarmName(uint8_t alarmIndex) const {
+        return alarmNames[alarmIndex];
+      }
+
+      static constexpr uint8_t MaxAlarms = 5;
 
     private:
       // Versions 255 is reserved for now, so the version field can be made
       // bigger, should it ever be needed.
-      static constexpr uint8_t alarmFormatVersion = 1;
+      static constexpr uint8_t alarmFormatVersion = 2;
 
       struct AlarmSettings {
-        uint8_t version = alarmFormatVersion;
         uint8_t hours = 7;
         uint8_t minutes = 0;
         RecurType recurrence = RecurType::None;
         bool isEnabled = false;
       };
 
+      struct AlarmData {
+        uint8_t version = alarmFormatVersion;
+        std::array<AlarmSettings, MaxAlarms> alarms;
+      };
+
       bool isAlerting = false;
-      bool alarmChanged = false;
+      bool alarmsChanged = false;
+      uint8_t currentAlertingAlarm = 0;
 
       Controllers::DateTime& dateTimeController;
       Controllers::FS& fs;
       System::SystemTask* systemTask = nullptr;
-      TimerHandle_t alarmTimer;
-      AlarmSettings alarm;
-      std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds> alarmTime;
+      std::array<TimerHandle_t, MaxAlarms> alarmTimers;
+      std::array<struct AlarmTimerData, MaxAlarms> alarmTimerData;
+      AlarmData alarmData;
+      std::array<std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>, MaxAlarms> alarmTimes;
+
+      // Hardcoded alarm names
+      inline static constexpr std::array<const char*, MaxAlarms> alarmNames = {"Wake Up", "Work Time", "Lunch Break", "Evening", "Bedtime"};
+
+      // Hardcoded alarm definitions
+      inline static constexpr std::array<AlarmSettings, MaxAlarms> defaultAlarms = {{{7, 0, RecurType::Daily, false},
+                                                                                     {8, 30, RecurType::Weekdays, false},
+                                                                                     {12, 0, RecurType::Weekdays, false},
+                                                                                     {18, 0, RecurType::Daily, false},
+                                                                                     {22, 0, RecurType::Daily, false}}};
 
       void LoadSettingsFromFile();
       void SaveSettingsToFile() const;
+      void InitializeDefaultAlarms();
     };
   }
 }

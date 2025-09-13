@@ -202,8 +202,11 @@ void SystemTask::Work() {
           GoToSleep();
           break;
         case Messages::OnNewTime:
-          if (alarmController.IsEnabled()) {
-            alarmController.ScheduleAlarm();
+          // Reschedule all enabled alarms when time changes
+          for (uint8_t i = 0; i < Controllers::AlarmController::MaxAlarms; i++) {
+            if (alarmController.IsEnabled(i)) {
+              alarmController.ScheduleAlarm(i);
+            }
           }
           break;
         case Messages::OnNewNotification:

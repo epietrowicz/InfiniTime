@@ -49,9 +49,10 @@ namespace Pinetime {
       void ScheduleAlarm(uint8_t alarmIndex);
       void DisableAlarm(uint8_t alarmIndex);
       void SetOffAlarmNow(uint8_t alarmIndex);
+      const char* GetAlarmName(uint8_t alarmIndex) const;
       uint32_t SecondsToAlarm(uint8_t alarmIndex) const;
       void StopAlerting();
-      enum class RecurType { None, Daily, Weekdays };
+      enum class RecurType { None, Daily, Weekdays, Weekends, Monthly };
 
       // Legacy single alarm interface for backward compatibility
       void SetAlarmTime(uint8_t alarmHr, uint8_t alarmMin) {
@@ -100,9 +101,9 @@ namespace Pinetime {
         SetRecurrence(0, recurrence);
       } // Legacy
 
-      const char* GetAlarmName(uint8_t alarmIndex) const {
-        return alarmNames[alarmIndex];
-      }
+      // const char* GetAlarmName(uint8_t alarmIndex) const {
+      //   return alarmNames[alarmIndex];
+      // }
 
       static constexpr uint8_t MaxAlarms = 5;
 
@@ -137,13 +138,16 @@ namespace Pinetime {
 
       // Hardcoded alarm names
       inline static constexpr std::array<const char*, MaxAlarms> alarmNames = {"Wake Up", "Work Time", "Lunch Break", "Evening", "Bedtime"};
+      inline static constexpr std::array<const char*, 2> dailyAlarmContent = {
+        "Are you wearing hearing aid, taking your daily meds?",
+        "Still wearing hearing aid? Before bed, take off, wipe all parts and store safely.. Take your daily meds."};
 
       // Hardcoded alarm definitions
-      inline static constexpr std::array<AlarmSettings, MaxAlarms> defaultAlarms = {{{7, 0, RecurType::Daily, true},
-                                                                                     {8, 30, RecurType::Weekdays, true},
-                                                                                     {12, 0, RecurType::Weekdays, true},
+      inline static constexpr std::array<AlarmSettings, MaxAlarms> defaultAlarms = {{{9, 0, RecurType::Daily, true},
                                                                                      {18, 0, RecurType::Daily, true},
-                                                                                     {22, 0, RecurType::Daily, true}}};
+                                                                                     {8, 30, RecurType::Weekends, true},
+                                                                                     {12, 0, RecurType::Weekdays, true},
+                                                                                     {18, 0, RecurType::Daily, true}}};
 
       void LoadSettingsFromFile();
       void SaveSettingsToFile() const;

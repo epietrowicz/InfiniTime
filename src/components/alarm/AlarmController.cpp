@@ -62,6 +62,10 @@ void AlarmController::Init(System::SystemTask* systemTask) {
   }
 }
 
+const char* AlarmController::GetAlarmName(uint8_t alarmIndex) const {
+  return alarmNames[alarmIndex];
+}
+
 void AlarmController::SaveAlarms() {
   // verify if it is necessary to save
   if (alarmsChanged) {

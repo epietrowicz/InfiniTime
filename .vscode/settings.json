@@ -65,7 +65,8 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "cinttypes": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "*.in": "cpp"
     },
     "editor.formatOnSave": true
 }

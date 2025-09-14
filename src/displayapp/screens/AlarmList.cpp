@@ -103,7 +103,7 @@ void AlarmList::UpdateAlarmItem(uint8_t alarmIndex) {
                    sizeof(timeStr),
                    alarmController.Hours(alarmIndex),
                    alarmController.Minutes(alarmIndex),
-                   Controllers::Settings::ClockType::H24);
+                   Controllers::Settings::ClockType::H12);
 
   FormatRecurrenceString(recurStr, sizeof(recurStr), alarmController.Recurrence(alarmIndex));
 
@@ -158,15 +158,12 @@ void AlarmList::FormatTimeString(char* buffer,
 void AlarmList::FormatRecurrenceString(char* buffer, size_t bufferSize, Controllers::AlarmController::RecurType recurrence) {
   switch (recurrence) {
     case Controllers::AlarmController::RecurType::None:
-      NRF_LOG_INFO("Once");
       snprintf(buffer, bufferSize, "Once");
       break;
     case Controllers::AlarmController::RecurType::Daily:
-      NRF_LOG_INFO("Daily");
       snprintf(buffer, bufferSize, "Daily");
       break;
     case Controllers::AlarmController::RecurType::Weekdays:
-      NRF_LOG_INFO("Mon-Fri");
       snprintf(buffer, bufferSize, "Mon-Fri");
       break;
   }

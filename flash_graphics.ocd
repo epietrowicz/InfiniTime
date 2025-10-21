@@ -1,0 +1,5 @@
+init
+
+program ./build/output/infinitime-resources.1.15.0.zip verify 0x00000000
+
+reset

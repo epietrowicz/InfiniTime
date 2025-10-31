@@ -63,7 +63,7 @@ void ScheduledRemindersController::Init(System::SystemTask* systemTask) {
     this, 
     SetOffReminder);
 
-  LoadSettingsFromFile();
+  // LoadSettingsFromFile();
   
   // Schedule the next reminder
   ScheduleNextReminder();
@@ -272,36 +272,36 @@ bool ScheduledRemindersController::AreAllRemindersEnabled() const {
 }
 
 void ScheduledRemindersController::LoadSettingsFromFile() {
-  lfs_file_t reminderFile;
+  // lfs_file_t reminderFile;
   std::array<ReminderSettings, reminderCount> reminderBuffer;
 
-  if (fs.FileOpen(&reminderFile, "/.system/reminders.dat", LFS_O_RDONLY) != LFS_ERR_OK) {
-    NRF_LOG_WARNING("[ScheduledRemindersController] Failed to open reminders data file, using defaults");
-    return;
-  }
+  // if (fs.FileOpen(&reminderFile, "/.system/reminders.dat", LFS_O_RDONLY) != LFS_ERR_OK) {
+  //   NRF_LOG_WARNING("[ScheduledRemindersController] Failed to open reminders data file, using defaults");
+  //   return;
+  // }
 
-  fs.FileRead(&reminderFile, reinterpret_cast<uint8_t*>(reminderBuffer.data()), sizeof(reminderBuffer));
-  fs.FileClose(&reminderFile);
+  // fs.FileRead(&reminderFile, reinterpret_cast<uint8_t*>(reminderBuffer.data()), sizeof(reminderBuffer));
+  // fs.FileClose(&reminderFile);
   
   reminders = reminderBuffer;
   NRF_LOG_INFO("[ScheduledRemindersController] Loaded reminder settings from file");
 }
 
 void ScheduledRemindersController::SaveSettingsToFile() const {
-  lfs_dir systemDir;
-  if (fs.DirOpen("/.system", &systemDir) != LFS_ERR_OK) {
-    fs.DirCreate("/.system");
-  }
-  fs.DirClose(&systemDir);
+  // lfs_dir systemDir;
+  // if (fs.DirOpen("/.system", &systemDir) != LFS_ERR_OK) {
+  //   fs.DirCreate("/.system");
+  // }
+  // fs.DirClose(&systemDir);
   
-  lfs_file_t reminderFile;
-  if (fs.FileOpen(&reminderFile, "/.system/reminders.dat", LFS_O_WRONLY | LFS_O_CREAT) != LFS_ERR_OK) {
-    NRF_LOG_WARNING("[ScheduledRemindersController] Failed to open reminders data file for saving");
-    return;
-  }
+  // lfs_file_t reminderFile;  
+  // if (fs.FileOpen(&reminderFile, "/.system/reminders.dat", LFS_O_WRONLY | LFS_O_CREAT) != LFS_ERR_OK) {
+  //   NRF_LOG_WARNING("[ScheduledRemindersController] Failed to open reminders data file for saving");
+  //   return;
+  // }
 
-  fs.FileWrite(&reminderFile, reinterpret_cast<const uint8_t*>(reminders.data()), sizeof(reminders));
-  fs.FileClose(&reminderFile);
+  // fs.FileWrite(&reminderFile, reinterpret_cast<const uint8_t*>(reminders.data()), sizeof(reminders));
+  // fs.FileClose(&reminderFile);
   NRF_LOG_INFO("[ScheduledRemindersController] Saved reminder settings to file");
 }
 

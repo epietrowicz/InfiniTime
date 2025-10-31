@@ -1,3 +1,17 @@
+To view logs: `JLinkRTTClient`
+
+To flash:
+```
+loadfile /Users/eric/Documents/projects/auditiontech/InfiniTime/build/src/pinetime-app-1.15.0.hex
+r
+g
+```
+
+To build (note debug flag with -e BUILD_TYPE=Debug):
+```
+docker run --rm -it -v ${PWD}:/sources --user $(id -u):$(id -g) -e BUILD_TYPE=Debug infinitime/infinitime-build
+```
+
 <div align="center">
 
 ![Header Image](doc/logo/watchface_collage.png)

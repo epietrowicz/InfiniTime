@@ -390,12 +390,12 @@ void DisplayApp::Refresh() {
         }
         break;
       case Messages::ScheduledReminderTriggered:
-        // if (currentApp == Apps::ScheduledReminders) {
-        //   auto* scheduledReminders = static_cast<Screens::ScheduledReminders*>(currentScreen.get());
-        //   scheduledReminders->SetOffReminder();
-        // } else {
+        if (currentApp == Apps::ScheduledReminders) {
+          auto* scheduledReminders = static_cast<Screens::ScheduledReminders*>(currentScreen.get());
+          scheduledReminders->SetAlerting();
+        } else {
           LoadNewScreen(Apps::ScheduledReminders, DisplayApp::FullRefreshDirections::None);
-        // }
+        }
         break;
       case Messages::ShowPairingKey:
         LoadNewScreen(Apps::PassKey, DisplayApp::FullRefreshDirections::Up);

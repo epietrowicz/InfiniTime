@@ -35,13 +35,16 @@ namespace {
     
     // Get the reminder that was scheduled to go off
     uint8_t scheduledReminder = controller->GetCurrentlyScheduledReminder();
+    NRF_LOG_INFO("[ScheduledRemindersController] Currently scheduled reminder: %d", scheduledReminder);
     if (scheduledReminder < 7) {
       NRF_LOG_INFO("[ScheduledRemindersController] Triggering reminder %d", scheduledReminder);
       controller->SetOffReminderNow(scheduledReminder);
+    } else {
+      NRF_LOG_WARNING("[ScheduledRemindersController] Invalid scheduled reminder index: %d", scheduledReminder);
     }
     
     // Reschedule timer for the next reminder
-    // controller->RescheduleTimer();
+    controller->RescheduleTimer();
   }
 }
 
@@ -317,9 +320,11 @@ uint8_t ScheduledRemindersController::FindNextReminder() const {
     
     // Calculate next occurrence for this reminder
     auto reminderTime = CalculateNextReminderTime(i, now);
+    NRF_LOG_INFO("[ScheduledRemindersController] Reminder %d time: %ld", i, reminderTime.time_since_epoch().count());
     if (reminderTime < nextTime) {
       nextTime = reminderTime;
       nextReminder = i;
+      NRF_LOG_INFO("[ScheduledRemindersController] Next reminder: %d", nextReminder);
     }
   }
   

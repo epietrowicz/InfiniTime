@@ -396,6 +396,7 @@ list(APPEND SOURCE_FILES
         displayapp/screens/PassKey.cpp
         displayapp/screens/Error.cpp
         displayapp/screens/Alarm.cpp
+        displayapp/screens/ScheduledReminders.cpp
         displayapp/screens/Styles.cpp
         displayapp/screens/WeatherSymbols.cpp
         displayapp/Colors.cpp
@@ -470,6 +471,7 @@ list(APPEND SOURCE_FILES
         components/settings/Settings.cpp
         components/timer/Timer.cpp
         components/alarm/AlarmController.cpp
+        components/scheduledReminders/ScheduledRemindersController.cpp
         components/fs/FS.cpp
         drivers/Cst816s.cpp
         FreeRTOS/port.c
@@ -539,6 +541,7 @@ list(APPEND RECOVERY_SOURCE_FILES
         components/settings/Settings.cpp
         components/timer/Timer.cpp
         components/alarm/AlarmController.cpp
+        components/scheduledReminders/ScheduledRemindersController.cpp
         drivers/Cst816s.cpp
         FreeRTOS/port.c
         FreeRTOS/port_cmsis_systick.c
@@ -616,6 +619,7 @@ set(INCLUDE_FILES
         displayapp/screens/Timer.h
         displayapp/screens/Dice.h
         displayapp/screens/Alarm.h
+        displayapp/screens/ScheduledReminders.h
         displayapp/Colors.h
         displayapp/widgets/Counter.h
         displayapp/widgets/PageIndicator.h
@@ -658,6 +662,7 @@ set(INCLUDE_FILES
         components/settings/Settings.h
         components/timer/Timer.h
         components/alarm/AlarmController.h
+        components/scheduledReminders/ScheduledRemindersController.h
         drivers/Cst816s.h
         FreeRTOS/portmacro.h
         FreeRTOS/portmacro_cmsis.h
@@ -778,7 +783,18 @@ link_directories(
 
 
 set(COMMON_FLAGS -MP -MD -mthumb -mabi=aapcs -ftree-vrp -ffunction-sections -fdata-sections -fno-strict-aliasing -fno-builtin -fshort-enums -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fstack-usage -fno-exceptions -fno-non-call-exceptions)
-set(WARNING_FLAGS -Wall -Wextra -Warray-bounds=2 -Wformat=2 -Wformat-overflow=2 -Wformat-truncation=2 -Wformat-nonliteral -Wno-missing-field-initializers -Wno-unknown-pragmas -Wno-expansion-to-defined -Wreturn-type -Werror=return-type -Werror)
+set(WARNING_FLAGS
+  -Wall -Wextra
+  -Warray-bounds=2
+  -Wformat=2 -Wformat-overflow=2 -Wformat-truncation=2 -Wformat-nonliteral
+  -Wno-missing-field-initializers -Wno-unknown-pragmas -Wno-expansion-to-defined
+  -Wreturn-type -Werror=return-type
+  -Werror
+  -Wno-error=unused-variable
+  -Wno-error=unused-but-set-variable
+  -Wno-error=unused-parameter
+  -Wno-error=unused-function
+)
 set(DEBUG_FLAGS -Og -g3)
 set(RELEASE_FLAGS -Os)
 set(CXX_FLAGS -fno-rtti)
@@ -829,22 +845,22 @@ endif()
 
 # Debug configuration
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-  add_definitions(-DDEBUG)
-  add_definitions(-DDEBUG_NRF_USER)
+#   add_definitions(-DDEBUG)
+#   add_definitions(-DDEBUG_NRF_USER)
 
   # NRF SDK Logging
   add_definitions(-DNRF_LOG_ENABLED=1)
-  # add_definitions(-DNRF_LOG_BACKEND_RTT_ENABLED=1)
-  # add_definitions(-DNRF_LOG_BACKEND_SERIAL_USES_RTT=1)
+  add_definitions(-DNRF_LOG_BACKEND_RTT_ENABLED=1)
+  add_definitions(-DNRF_LOG_BACKEND_SERIAL_USES_RTT=1)
 
   # NRF SDK individual modules logging
-  # add_definitions(-DCLOCK_CONFIG_LOG_ENABLED=1)
-  # add_definitions(-DCLOCK_CONFIG_LOG_LEVEL=4)
-  # add_definitions(-DRTC_CONFIG_LOG_ENABLED=1)
-  # add_definitions(-DRTC_CONFIG_LOG_LEVEL=4)
+#   add_definitions(-DCLOCK_CONFIG_LOG_ENABLED=1)
+#   add_definitions(-DCLOCK_CONFIG_LOG_LEVEL=4)
+#   add_definitions(-DRTC_CONFIG_LOG_ENABLED=1)
+#   add_definitions(-DRTC_CONFIG_LOG_LEVEL=4)
   
   # Nimble Logging
-  add_definitions(-DMYNEWT_VAL_NEWT_FEATURE_LOGCFG=1)
+#   add_definitions(-DMYNEWT_VAL_NEWT_FEATURE_LOGCFG=1)
   # add_definitions(-DMYNEWT_VAL_LOG_LEVEL=0)
   # add_definitions(-DMYNEWT_VAL_BLE_HS_LOG_LVL=0)
 endif()

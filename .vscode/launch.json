@@ -2,6 +2,13 @@
     "version": "0.1.0",
     "configurations": [
         {
+            "name": "Debug - JLink",
+            "servertype": "jlink",
+            "device": "nRF52",
+            "interface": "swd",
+            "runToEntryPoint": "main"
+        },
+        {
             "name": "Debug - Openocd docker Remote",
             "type": "cortex-debug",
             "cwd": "${workspaceRoot}",
